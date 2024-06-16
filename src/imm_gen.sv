@@ -13,17 +13,17 @@ localparam IMMS = 3'b010;
 localparam IMMB = 3'b011;
 localparam IMMJ = 3'b100;
 
-logic signed[11:0] immI_s;
-logic signed[11:0] immS_s;
-logic signed[11:0] immB_s;
-logic signed[19:0] immU_s;
-logic signed[19:0] immJ_s;
+logic signed[31:0] immI_s;
+logic signed[31:0] immS_s;
+logic signed[31:0] immB_s;
+logic signed[31:0] immU_s;
+logic signed[31:0] immJ_s;
 always_comb begin
     immI_s=$signed(immI);
     immS_s=$signed(immS);
-    immB_s=$signed(immB);
-    immU_s=$signed(immU);
-    immJ_s=$signed(immJ);
+    immB_s=$signed({immB,1'b0});
+    immU_s=$signed({immU,12'd0});
+    immJ_s=$signed({immJ,1'b0});
     case(extop)
         IMMI:imm=immI_s;
         IMMU:imm=immU_s;

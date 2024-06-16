@@ -1,0 +1,2 @@
+-F E:/project/SystemVerilog/riscv/src/filelist.f
+-F E:/project/SystemVerilog/riscv/tb/filelist.f

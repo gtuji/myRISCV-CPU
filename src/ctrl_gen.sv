@@ -42,17 +42,14 @@ always_comb begin:IMM_GEN
         LUI_OP,AUIPC_OP:begin
             extop=IMMU;
         end
-        ICODE_OP:begin
+        ICODE_OP,JALR,LCODE:begin
             extop=IMMI;
         end
-        JAL,JALR:begin
+        JAL:begin
             extop=IMMJ;
         end
         BCODE:begin
             extop=IMMB;
-        end
-        LCODE:begin
-            extop=IMMI;
         end
         SCODE:begin
             extop=IMMS;
@@ -71,7 +68,10 @@ always_comb begin : ALU_OP
             endcase
         end
         RCODE:begin
-            aluctr={func7[5],func3};
+            case(func3)
+                3'b011:aluctr=4'b1010;
+                default:aluctr={func7[5],func3};
+            endcase
         end
         JAL,JALR,SCODE,LCODE:aluctr=4'b0000;
         BCODE:begin
@@ -90,7 +90,7 @@ always_comb begin:ALU_ASRC
 end
 always_comb begin:ALU_BSRC
     case(op[6:2])
-        RCODE:alubsrc=2'b00;
+        RCODE,BCODE:alubsrc=2'b00;
         LUI_OP,AUIPC_OP,ICODE_OP,LCODE,SCODE:alubsrc=2'b01;
         JAL,JALR:alubsrc=2'b10;
     endcase
@@ -120,7 +120,16 @@ always_comb begin : BRANCH
     case(op[6:2])
         JAL:branch=3'b001;
         JALR:branch=3'b010;
-        BCODE:branch={1'b1,func3[1:0]};
+        BCODE:begin
+            case(func3)
+                3'b000:branch=3'b100;
+                3'b001:branch=3'b101;
+                3'b100:branch=3'b110;
+                3'b101:branch=3'b111;
+                3'b110:branch=3'b110;
+                3'b111:branch=3'b111;
+            endcase
+        end
         default:branch=3'd0;
     endcase
 end

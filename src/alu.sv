@@ -6,7 +6,7 @@ module ALU(
     output logic zero,
     output logic less
 );
-logic cin,direction,sign;
+logic cin,direction,sign,arithmetic;
 logic [31:0] b_adder_src;
 logic [31:0] sum,result;
 wire cout,overflow;
@@ -15,12 +15,14 @@ always_comb begin
     b_adder_src={32{cin}}^b;
     direction=sel==3'b001;
     sign=~sel[3];
+    arithmetic=sel[3];
     less=sign?overflow^sum[31]:cin^cout;
-    zero=~|{cout,sum};
+    zero=~|sum;
 end
 always_comb begin
     case(sel[2:0])
-        3'b000,3'b010:f=sum;
+        3'b000:f=sum;
+        3'b010:f={31'd0,less};
         3'b001,3'b101:f=result;
         3'b011:f=b;
         3'b100:f=a^b;
@@ -41,9 +43,9 @@ ADDER#(
 
 SHIFTER u_SHIFTER(
     .src(a),
-    .num(b),
+    .num(b[4:0]),
     .direction(direction),
-    .sign(sign),
+    .sign(arithmetic),
     .result(result)
 );
 endmodule

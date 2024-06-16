@@ -42,7 +42,7 @@ wire pc_asrc_w,pc_bsrc_w;
 wire[31:0] din_w;
 assign a_w=aluasrc_w?craddr_w:doutA_w;
 assign b_w={32{alubsrc_w==2'b00}}&doutB_w|{32{alubsrc_w==2'b01}}&imm_w|{32{alubsrc_w==2'b10}}&32'd4;
-assign nxaddr_w=(pc_asrc_w?imm_w:4)+(pc_bsrc_w?rs1_w:craddr_w);
+assign nxaddr_w=(pc_asrc_w?imm_w:4)+(pc_bsrc_w?doutA_w:craddr_w);
 assign din_w=memtoreg_w?data_out_w:f_w;
 ALU u_ALU(
     .a(a_w),
@@ -96,7 +96,7 @@ ICACHE u_ICACHE(
     .ren(1'b1),
     .dout(inst_w)
 );
-DCACHE u_DECACHE(
+DCACHE u_DCACHE(
     .wrclk(clk),
     .rdclk(clk),
     .memop(memop_w),

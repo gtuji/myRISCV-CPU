@@ -9,7 +9,7 @@ module REG_FILE(
     output logic[31:0] doutB
 );
 logic[31:0]regs[1:31];
-always_ff @(posedge clk) begin
+always_ff @(negedge clk) begin
     if(wen==1'b1&&(|addrW))begin
         regs[addrW]<=din;
     end
